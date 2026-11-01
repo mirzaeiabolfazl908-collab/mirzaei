@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>برنامه‌ساز هفتگی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050805;--panel:#0b120c;--card:#101a12;--line:#1c2e20;--tx:#e6ffe9;--mut:#7fa086;--ac:#39ff14;--up:#39ff14;--dn:#ff3b5c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="night"]{--bg:#070a14;--panel:#0d1222;--card:#141b33;--line:#232c4d;--tx:#e8ecff;--mut:#8a94c0;--ac:#6ea8ff}
+:root[data-theme="day"]{--bg:#eef5ee;--panel:#fff;--card:#f4faf4;--line:#cfe0d0;--tx:#10231a;--mut:#4d6b57;--ac:#0a9d3a;--up:#0a9d3a;--dn:#d6224a}
+:root[data-theme="purple"]{--bg:#0a0612;--panel:#130b22;--card:#1b1030;--line:#2f1d52;--tx:#f1e8ff;--mut:#a28ac9;--ac:#b86bff;--up:#b86bff}
+:root[data-theme="ocean"]{--bg:#03090f;--panel:#08141f;--card:#0c1d2c;--line:#163349;--tx:#e4f6ff;--mut:#7aa6bd;--ac:#00d4ff;--up:#00d4ff}
+:root[data-theme="sunset"]{--bg:#120804;--panel:#1c0f08;--card:#26140b;--line:#432414;--tx:#fff0e6;--mut:#c29a80;--ac:#ff7a2f;--up:#ffb347}
+:root[data-theme="rose"]{--bg:#120610;--panel:#1d0b1a;--card:#281026;--line:#4a1d44;--tx:#ffe8f6;--mut:#c98ab5;--ac:#ff4fa3;--up:#ff4fa3}
+:root[data-theme="gold"]{--bg:#0d0a03;--panel:#171205;--card:#211a08;--line:#3d3110;--tx:#fff8e0;--mut:#b8a46a;--ac:#ffc61a;--up:#ffc61a}
+:root[data-theme="crimson"]{--bg:#100506;--panel:#1a0a0c;--card:#240e11;--line:#431a20;--tx:#ffe9ec;--mut:#c78d95;--ac:#ff2d55;--up:#3dff8a;--dn:#ff2d55}
+*{box-sizing:border-box}
+.add input,.add select{padding:8px 10px;font-size:13px}
+.splash{position:fixed;inset:0;z-index:20;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--ac) 22%,var(--bg)),var(--bg) 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;padding:24px}
+.splash h1{font-size:clamp(30px,8vw,56px);margin:0;transform:perspective(600px) rotateX(12deg)}
+.splash p{color:var(--mut);margin:0}
+.splash .by{margin-top:6px;display:flex;flex-direction:column;gap:2px;font-size:clamp(26px,7vw,42px);font-weight:800;background:linear-gradient(90deg,var(--ac),#ffd23f,#ff4fa3);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px color-mix(in srgb,var(--ac) 55%,transparent))}
+.splash .by small{font-size:14px;font-weight:600;color:var(--mut);-webkit-text-fill-color:var(--mut)}
+body.locked .app{visibility:hidden}
+.mini .day{min-height:110px;transform:none}
+.mini .task{font-size:12px}
+aside{overflow-y:auto}
+#mopts{display:none;flex-direction:column;gap:6px}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font-family:Vazirmatn,Tahoma,sans-serif;font-size:13px;overflow:hidden}
+.app{display:flex;direction:ltr;height:100%}
+main{flex:1;min-width:0;overflow:auto;direction:rtl;padding:10px;display:flex;flex-direction:column;gap:10px}
+aside{width:180px;flex:none;direction:rtl;background:var(--panel);border-left:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:8px}
+h1{font-size:18px;margin:0 0 12px;color:var(--ac);text-shadow:0 0 14px color-mix(in srgb,var(--ac) 60%,transparent)}
+.nav{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--line);border-bottom:4px solid var(--line);border-radius:12px;padding:11px 12px;text-align:right;cursor:pointer;transition:transform .12s}
+.nav:hover{transform:translateY(-2px)}
+.nav.on{border-color:var(--ac);color:var(--ac);box-shadow:0 0 18px color-mix(in srgb,var(--ac) 35%,transparent)}
+.who{margin-top:auto;color:var(--mut);font-size:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px;box-shadow:0 14px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.top b{font-size:16px}
+.btn{font:inherit;font-weight:800;color:#031505;background:var(--ac);border:0;border-bottom:4px solid color-mix(in srgb,var(--ac) 55%,#000);border-radius:11px;padding:7px 13px;font-size:12.5px;cursor:pointer;transition:transform .1s,border-width .1s}
+.btn:active{transform:translateY(3px);border-bottom-width:1px}
+.btn.ghost{background:var(--card);color:var(--tx);border-color:var(--line)}
+.add{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+input,select{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 10px;min-width:0}
+input:focus,select:focus,.btn:focus-visible,.nav:focus-visible{outline:2px solid var(--ac)}
+.add input[type=text]{flex:1;min-width:140px}
+.week{display:grid;grid-template-columns:repeat(7,minmax(128px,1fr));gap:8px;overflow-x:auto;perspective:900px;padding-bottom:6px}
+.day{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;min-height:270px;display:flex;flex-direction:column;gap:6px;transform:rotateX(4deg);transform-origin:top;box-shadow:0 10px 18px rgba(0,0,0,.35)}
+.day h3{margin:0 0 4px;font-size:14px;text-align:center;color:var(--ac)}
+.day.today{border-color:var(--ac);box-shadow:0 0 20px color-mix(in srgb,var(--ac) 30%,transparent)}
+.task{display:flex;gap:6px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-bottom:3px solid var(--line);border-radius:10px;padding:7px;font-size:12.5px;transition:transform .12s}
+.task:hover{transform:translateY(-2px) scale(1.02)}
+.task.done{border-bottom-color:var(--up);opacity:.75}
+.task.done .nm{text-decoration:line-through}
+.task input{accent-color:var(--ac);width:17px;height:17px;margin:2px 0 0;padding:0;flex:none}
+.task .nm{flex:1;word-break:break-word}
+.task small{display:block;color:var(--mut)}
+.task button{background:none;border:0;color:var(--dn);cursor:pointer;font-size:15px;padding:0 2px}
+.empty{color:var(--mut);font-size:12px;text-align:center;margin:auto 0}
+.chartwrap{position:relative;height:190px}
+canvas{width:100%;height:100%;display:block}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--ac);border-radius:10px;padding:6px 10px;font-size:12px;display:none;white-space:nowrap;direction:rtl}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
+.ov.show{display:flex}
+.modal{background:var(--panel);border:1px solid var(--ac);border-radius:20px;padding:20px;width:min(420px,100%);max-height:90%;overflow:auto;display:flex;flex-direction:column;gap:10px;box-shadow:0 0 40px color-mix(in srgb,var(--ac) 30%,transparent)}
+.modal h2{margin:0;color:var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.big{font-size:44px;font-weight:800;color:var(--ac);text-align:center}
+.bar{height:12px;background:var(--card);border-radius:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ac)}
+#menu{display:none}
+@media(max-width:760px){
+ aside{position:fixed;inset:0 0 0 auto;z-index:8;transform:translateX(100%);transition:transform .2s}
+ aside.open{transform:none}
+ #menu{display:inline-block}
+ .week{grid-template-columns:repeat(7,minmax(104px,1fr))}
+ .day{min-height:220px}
+ .chartwrap{height:170px}
+ main{padding:8px;gap:8px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body class="locked">
+<div class="app">
+<main>
+ <div class="top panel">
+  <div><button class="btn ghost" id="menu">☰ منو</button> <b id="hello"></b></div>
+  <div class="row"><button class="btn ghost" id="sv">💾 ذخیره</button><button class="btn ghost" id="au"></button><button class="btn" id="run">اجرا و ارزیابی هفته</button></div>
+ </div>
+ <section class="panel">
+  <div class="top"><b id="ptitle"></b></div>
+  <div class="add">
+   <select id="aday"></select>
+   <input type="text" id="atitle" maxlength="60">
+   <input type="time" id="atime" value="08:00">
+   <button class="btn" id="aok">افزودن</button>
+  </div>
+  <div class="week" id="week"></div>
+ </section>
+ <section class="panel">
+  <div class="top"><b id="ctitle"></b><span class="row"><button class="btn" data-ct="candle">🕯 چارتی</button><button class="btn ghost" data-ct="line">📈 خطی</button></span><span style="color:var(--mut);font-size:12px">هر شمع یک روز است؛ تیک‌ها شمع را بالا می‌برند</span></div>
+  <div class="chartwrap"><canvas id="cv"></canvas><div class="tip" id="tip"></div></div>
+ </section>
+</main>
+<aside id="side">
+ <h1>برنامه‌ساز</h1>
+ <button class="nav on" data-m="task">📋 برنامه روزانه</button>
+ <button class="nav" data-m="meal">🍽 برنامه غذایی</button>
+ <div id="mopts"></div>
+ <button class="nav" id="narc">📚 برنامه‌های ذخیره‌شده</button>
+ <button class="nav" id="nset">⚙️ تنظیمات و رنگ‌ها</button>
+ <button class="nav" id="nclr">🧹 پاک کردن</button>
+ <div class="who" id="who"></div>
+</aside>
+</div>
+
+<div class="splash" id="splash"><h1>برنامه هفتگی حرفه‌ای</h1><p>برنامه روزانه، برنامه غذایی و چارت پیشرفت تو</p><button class="btn" id="go">ورود به برنامه</button><div class="by"><small>سازنده</small>ابوالفضل میرزایی</div></div>
+
+<div class="ov" id="ovp"><div class="modal">
+ <h2>احراز هویت</h2>
+ <input type="text" id="pf" placeholder="نام" maxlength="30">
+ <input type="text" id="pl" placeholder="نام خانوادگی" maxlength="30">
+ <input type="number" id="pa" placeholder="سن" min="5" max="110">
+ <input type="text" id="pg" placeholder="هدف شما (دلخواه)" maxlength="80">
+ <button class="btn" id="pok">تأیید و ورود</button>
+</div></div>
+
+<div class="ov" id="ovs"><div class="modal">
+ <h2>تنظیمات</h2>
+ <div class="row">
+  <button class="btn ghost" data-t="neon">🟢 نئونی</button>
+  <button class="btn ghost" data-t="night">🔵 شب</button>
+  <button class="btn ghost" data-t="day">⚪ روز</button>
+  <button class="btn ghost" data-t="purple">🟣 بنفش</button>
+  <button class="btn ghost" data-t="ocean">🌊 اقیانوس</button>
+  <button class="btn ghost" data-t="sunset">🟠 غروب</button>
+  <button class="btn ghost" data-t="rose">🌸 رز</button>
+  <button class="btn ghost" data-t="gold">🟡 طلایی</button>
+  <button class="btn ghost" data-t="crimson">🔴 سرخ</button>
+ </div>
+ <label>رنگ اصلی <input type="color" id="acc" value="#39ff14"></label>
+ <button class="btn ghost" id="edp">ویرایش نام و سن</button>
+ <button class="btn" id="sx">بستن</button>
+</div></div>
+
+<div class="ov" id="ovr"><div class="modal" id="rbody"></div></div>
+
+<div class="ov" id="ova"><div class="modal" style="width:min(760px,100%)"><h2>برنامه‌های ذخیره‌شده</h2><div id="abody" style="display:flex;flex-direction:column;gap:8px"></div><button class="btn" id="ax">بستن</button></div></div>
+
+<div class="ov" id="ovn"><div class="modal"><h2>✅ هفته ذخیره شد</h2><div>تمام اعمال هفتگی شما ذخیره شد و در «برنامه‌های ذخیره‌شده در هفته» قابل مشاهده است. هفته جدید با همان برنامه‌ها شروع شده و فقط تیک‌ها خالی شده‌اند.</div><button class="btn" id="nok">باشه</button></div></div>
+
+<div class="ov" id="ovc"><div class="modal"><h2>پاک کردن</h2><button class="btn ghost" id="c1">🗑 پاک کردن برنامه جدید</button><button class="btn ghost" id="c2">📚 پاک کردن برنامه‌های ذخیره‌شده</button><button class="btn ghost" id="c3" style="color:var(--dn)">♻️ ریست برنامه</button><button class="btn" id="cx">بستن</button></div></div>
+
+<script>
+const D=['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه'];
+const $=id=>document.getElementById(id);
+let S={p:null,m:'task',t:'neon',ac:'',auto:true,arch:[],wk:'',notice:false,ct:'candle',data:{task:[],meal:[]}};
+try{const r=localStorage.getItem('wk1');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const put=()=>{try{localStorage.setItem('wk1',JSON.stringify(S));return true}catch(e){return false}};
+const save=()=>{if(S.auto)put()};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const list=()=>S.data[S.m];
+let sel=0;
+
+function theme(){
+ const r=document.documentElement;
+ r.dataset.theme=S.t;
+ if(S.ac){r.style.setProperty('--ac',S.ac);r.style.setProperty('--up',S.ac)}else{r.style.removeProperty('--ac');r.style.removeProperty('--up')}
+}
+function labels(){
+ const meal=S.m==='meal';
+ $('ptitle').textContent=meal?'برنامه غذایی هفته':'برنامه روزانه هفته';
+ $('ctitle').textContent=meal?'نمودار پایبندی به رژیم هفتگی':'نمودار عملکرد هفتگی';
+ $('atitle').placeholder=meal?'وعده غذایی، مثلاً صبحانه: املت':'کار روزمره، مثلاً ورزش';
+ document.querySelectorAll('.nav[data-m]').forEach(b=>b.classList.toggle('on',b.dataset.m===S.m));
+ if(S.p){$('hello').textContent='سلام '+S.p.f+' '+S.p.l;$('who').textContent=S.p.f+' '+S.p.l+' · '+S.p.a+' ساله'+(S.p.g?' · 🎯 '+S.p.g:'')}
+}
+function render(){
+ labels();paintMeals();
+ $('week').innerHTML=D.map((n,i)=>{
+  const ts=list().filter(t=>t.d===i).sort((a,b)=>a.time.localeCompare(b.time));
+  return `<div class="day${i===sel?' today':''}" data-d="${i}" style="cursor:pointer"><h3>${n}</h3>`+(ts.length?ts.map(t=>`<div class="task${t.done?' done':''}"><input type="checkbox" data-id="${t.id}" ${t.done?'checked':''} aria-label="انجام شد"><div class="nm">${esc(t.t)}<small>${t.time}</small></div><button data-del="${t.id}" aria-label="حذف">×</button></div>`).join(''):'<div class="empty">خالی</div>')+'</div>';
+ }).join('');
+ chart();
+}
+// candles: each undone item = -1, done = +1, walked in time order
+function candles(items){
+ let prev=0;
+ return D.map((n,i)=>{
+  const ts=(items||list()).filter(t=>t.d===i).sort((a,b)=>a.time.localeCompare(b.time));
+  let v=prev,hi=v,lo=v;
+  ts.forEach(t=>{v+=t.done?1:-1;hi=Math.max(hi,v);lo=Math.min(lo,v)});
+  const c={n,o:prev,c:v,h:hi,l:lo,tot:ts.length,done:ts.filter(t=>t.done).length};
+  prev=v;return c;
+ });
+}
+let CD=[],geo={};
+function chart(cv2,items){
+ const keep=CD,kg=geo;
+ const cv=cv2||$('cv'),dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+ if(!w)return;
+ cv.width=w*dpr;cv.height=h*dpr;
+ const g=cv.getContext('2d');g.scale(dpr,dpr);
+ const st=getComputedStyle(document.documentElement),up=st.getPropertyValue('--up').trim()||'#39ff14',dn=st.getPropertyValue('--dn').trim(),ln=st.getPropertyValue('--line').trim(),mut=st.getPropertyValue('--mut').trim(),bg=st.getPropertyValue('--bg').trim();
+ g.fillStyle=bg;g.fillRect(0,0,w,h);
+ CD=candles(items);
+ let mx=Math.max(...CD.map(c=>c.h),5)+.5,mn=Math.min(...CD.map(c=>c.l),-5)-.5;
+ const L=10,R=44,T=12,B=24,pw=w-L-R,ph=h-T-B;
+ const y=v=>T+(mx-v)/(mx-mn)*ph;
+ g.font='11px Vazirmatn,Tahoma';g.lineWidth=1;
+ const step=Math.max(1,Math.ceil((mx-mn)/10));
+ for(let v=Math.ceil(mn);v<=mx;v+=step){g.strokeStyle=ln;g.beginPath();g.moveTo(L,y(v)+.5);g.lineTo(L+pw,y(v)+.5);g.stroke();g.fillStyle=mut;g.textAlign='left';g.fillText(v,L+pw+6,y(v)+4)}
+ const cw=pw/7;geo={L,cw,T,ph,pw};
+ // moving average
+ g.strokeStyle='#ffd23f';g.lineWidth=1.5;g.beginPath();
+ CD.forEach((c,i)=>{const a=CD.slice(Math.max(0,i-2),i+1).reduce((s,x)=>s+x.c,0)/Math.min(3,i+1);const x=L+cw*i+cw/2;i?g.lineTo(x,y(a)):g.moveTo(x,y(a))});g.stroke();
+ if(S.ct==='line'){g.strokeStyle=up;g.lineWidth=2.5;g.shadowColor=up;g.shadowBlur=12;g.beginPath();g.moveTo(L,y(0));CD.forEach((c,i)=>g.lineTo(L+cw*i+cw/2,y(c.c)));g.stroke();g.shadowBlur=0;CD.forEach((c,i)=>{const x=L+cw*i+cw/2;g.fillStyle=c.c>=c.o?up:dn;g.beginPath();g.arc(x,y(c.c),4,0,7);g.fill();g.fillStyle=mut;g.textAlign='center';g.fillText(c.n,x,h-8)})}else
+ CD.forEach((c,i)=>{
+  const x=L+cw*i+cw/2,col=c.c>=c.o?up:dn,bw=Math.min(cw*.32,16);
+  g.strokeStyle=col;g.fillStyle=col;g.lineWidth=1.5;
+  g.beginPath();g.moveTo(x,y(c.h));g.lineTo(x,y(c.l));g.stroke();
+  const t=y(Math.max(c.o,c.c)),hh=Math.max(2,Math.abs(y(c.o)-y(c.c)));
+  g.shadowColor=col;g.shadowBlur=10;g.fillRect(x-bw/2,t,bw,hh);g.shadowBlur=0;
+  g.fillStyle=mut;g.textAlign='center';g.fillText(c.n,x,h-8);
+ });
+ if(cv2){CD=keep;geo=kg}
+}
+$('cv').addEventListener('mousemove',e=>{
+ const r=$('cv').getBoundingClientRect(),i=Math.floor((e.clientX-r.left-geo.L)/geo.cw),tp=$('tip');
+ if(i<0||i>6){tp.style.display='none';return}
+ const c=CD[i];
+ tp.innerHTML=`<b>${c.n}</b><br>انجام‌شده: ${c.done} از ${c.tot}<br>باز: ${c.o} ← بسته: ${c.c}`;
+ tp.style.display='block';tp.style.left=Math.min(e.clientX-r.left+12,r.width-150)+'px';tp.style.top='10px';
+});
+$('cv').addEventListener('mouseleave',()=>$('tip').style.display='none');
+window.addEventListener('resize',()=>chart());
+
+$('week').addEventListener('click',e=>{
+ const id=e.target.dataset.id,del=e.target.dataset.del;
+ const dc=e.target.closest('.day');
+ if(dc&&!id&&!del&&!e.target.closest('.task')){sel=+dc.dataset.d;$('aday').value=sel;render();return}
+ if(id){const t=list().find(x=>x.id==id);t.done=e.target.checked;save();render()}
+ if(del){S.data[S.m]=list().filter(x=>x.id!=del);save();render()}
+});
+$('aday').innerHTML=D.map((n,i)=>`<option value="${i}">${n}</option>`).join('');
+$('aday').value=sel;
+$('aday').onchange=()=>{sel=+$('aday').value;render()};
+function addTask(){
+ const t=$('atitle').value.trim();if(!t){$('atitle').focus();return}
+ list().push({id:Date.now()+Math.random(),d:+$('aday').value,t,time:$('atime').value||'00:00',done:false});
+ $('atitle').value='';save();render();
+}
+$('aok').onclick=addTask;
+$('atitle').addEventListener('keydown',e=>{if(e.key==='Enter')addTask()});
+
+document.querySelectorAll('.nav[data-m]').forEach(b=>b.onclick=()=>{S.m=b.dataset.m;save();render();$('side').classList.remove('open')});
+$('menu').onclick=()=>$('side').classList.toggle('open');
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const fd=s=>new Date(s+'T12:00:00').toLocaleDateString('fa-IR',{year:'numeric',month:'long',day:'numeric'});
+const endOf=s=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+6);return iso(d)};
+function wkStart(){const d=new Date();d.setDate(d.getDate()-(d.getDay()+1)%7);return iso(d)}
+function archiveWeek(){
+ if(S.data.task.length||S.data.meal.length){S.arch.push({id:Date.now(),start:S.wk||wkStart(),task:JSON.parse(JSON.stringify(S.data.task)),meal:JSON.parse(JSON.stringify(S.data.meal))});S.data.task.concat(S.data.meal).forEach(t=>t.done=false);return true}return false
+}
+function rollover(){
+ if(!S.wk){S.wk=wkStart();put();return}
+ const addD=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
+ const wkEnd=s=>new Date(addD(s,6)+'T23:59:00');
+ if(Date.now()>=wkEnd(S.wk)){if(archiveWeek())S.notice=true;let n=addD(S.wk,7);while(Date.now()>=wkEnd(n))n=addD(n,7);S.wk=n;put()}
+}
+let curA=0;
+function showArch(del){
+ const a=S.arch.slice().reverse();
+ $('abody').innerHTML=(a.length?a.map(w=>del?`<div class="nav" style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>هفته ${fd(w.start)} تا ${fd(endOf(w.start))}</span><button class="btn ghost" data-del="${w.id}" style="color:var(--dn)">🗑 حذف</button></div>`:`<button class="nav arow" style="display:flex;justify-content:space-between;gap:8px" data-aid="${w.id}"><span>هفته ${fd(w.start)} تا ${fd(endOf(w.start))}</span><span>${w.task.filter(t=>t.done).length}/${w.task.length} کار · ${w.meal.filter(t=>t.done).length}/${w.meal.length} وعده</span></button>`).join(''):'<div class="empty">هنوز هفته‌ای ذخیره نشده. هر هفته از شنبه، هفته قبل با تاریخش خودکار اینجا ذخیره می‌شود.</div>')+'<button class="btn ghost" id="aclose">بستن هفته جاری و ذخیره در آرشیو</button>';
+ $('ova').classList.add('show');
+}
+function openArch(id,mode){
+ curA=id;
+ const w=S.arch.find(x=>x.id===id),items=w[mode];
+ $('abody').innerHTML=`<div class="tabs" style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn ghost" id="aback">→ بازگشت</button><button class="btn ${mode==='task'?'':'ghost'}" data-am="task">برنامه روزانه</button><button class="btn ${mode==='meal'?'':'ghost'}" data-am="meal">برنامه غذایی</button></div><b>هفته ${fd(w.start)} تا ${fd(endOf(w.start))} · فقط مشاهده 🔒</b><div class="chartwrap"><canvas id="cv2"></canvas></div><div class="week mini">`+D.map((n,i)=>{const ts=items.filter(t=>t.d===i).sort((a,b)=>a.time.localeCompare(b.time));return `<div class="day"><h3>${n}</h3>`+(ts.length?ts.map(t=>`<div class="task${t.done?' done':''}"><span>${t.done?'✅':'⬜'}</span><div class="nm">${esc(t.t)}<small>${t.time}</small></div></div>`).join(''):'<div class="empty">خالی</div>')+'</div>'}).join('')+'</div>';
+ chart($('cv2'),items);
+}
+$('abody').addEventListener('click',e=>{
+ const b=e.target.closest('[data-aid]');
+ if(b){openArch(+b.dataset.aid,'task');return}
+ const m=e.target.closest('[data-am]');
+ if(m){openArch(curA,m.dataset.am);return}
+ if(e.target.id==='aback'){showArch();return}
+ if(e.target.id==='aclose'&&confirm('هفته جاری همین حالا ذخیره شود و هفته جدید شروع شود؟')){archiveWeek();S.wk=wkStart();put();render();showArch()}
+});
+$('narc').onclick=()=>{showArch();$('side').classList.remove('open')};
+$('ax').onclick=()=>$('ova').classList.remove('show');
+$('nclr').onclick=()=>{$('ovc').classList.add('show');$('side').classList.remove('open')};
+$('cx').onclick=()=>$('ovc').classList.remove('show');
+$('c1').onclick=()=>{if(confirm('برنامه روزانه و غذایی هفته جاری پاک شود؟')){S.data={task:[],meal:[]};save();render();$('ovc').classList.remove('show')}};
+$('c2').onclick=()=>{if(confirm('همه برنامه‌های ذخیره‌شده برای همیشه پاک شود؟')){S.arch=[];put();$('ovc').classList.remove('show')}};
+$('c3').onclick=()=>{if(confirm('همه‌چیز (اطلاعات، برنامه‌ها، آرشیو و تنظیمات) پاک شود و برنامه از اول شروع شود؟')){try{localStorage.removeItem('wk1')}catch(e){}location.reload()}};
+$('nset').onclick=()=>{$('ovs').classList.add('show');$('side').classList.remove('open')};
+$('sx').onclick=()=>$('ovs').classList.remove('show');
+document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{S.t=b.dataset.t;S.ac='';save();theme();chart()});
+$('acc').oninput=e=>{S.ac=e.target.value;save();theme();chart()};
+$('edp').onclick=()=>{$('ovs').classList.remove('show');openProfile(true)};
+
+function openProfile(pre){
+ ['pf','pl','pa','pg'].forEach(k=>{$(k).value='';$(k).setAttribute('autocomplete','off')});
+ if(pre&&S.p){$('pf').value=S.p.f;$('pl').value=S.p.l;$('pa').value=S.p.a;$('pg').value=S.p.g||''}
+ $('ovp').classList.add('show');
+}
+$('pok').onclick=()=>{
+ const f=$('pf').value.trim(),l=$('pl').value.trim(),a=+$('pa').value;
+ if(!f||!l||!(a>=5&&a<=110)){alert('نام، نام خانوادگی و سن (۵ تا ۱۱۰) را کامل وارد کن.');return}
+ S.p={f,l,a,g:$('pg').value.trim()};save();$('ovp').classList.remove('show');document.body.classList.remove('locked');render();checkNotice();
+};
+
+$('run').onclick=()=>{
+ const a=S.p.a,all=S.data.task.concat(S.data.meal),tot=all.length,dn=all.filter(t=>t.done).length;
+ const rate=tot?Math.round(dn/tot*100):0;
+ const goal=a<18?70:a<=40?75:a<=60?65:55;
+ let v,m;
+ if(!tot){v='هنوز برنامه‌ای ثبت نشده';m='چند کار یا وعده اضافه کن و دوباره اجرا بزن.'}
+ else if(rate>=goal+15){v='عالی بود 🔥';m='فراتر از هدف مناسب سن خودت بودی. همین ریتم را نگه دار.'}
+ else if(rate>=goal){v='خوب بود ✅';m='به هدف هفتگی رسیدی.'}
+ else if(rate>=goal-20){v='نزدیک بود';m='کمی تا هدف فاصله داری؛ کارهای ساعت‌دار را اول انجام بده.'}
+ else{v='این هفته ضعیف بود';m='برنامه را سبک‌تر کن و روزی چند کار کوچک بچین.'}
+ $('rbody').innerHTML=`<h2>${esc(S.p.f)} ${esc(S.p.l)}، ارزیابی هفته</h2><div class="big">${rate}٪</div><div class="bar"><i style="width:${rate}%"></i></div><b>${v}</b><div>${dn} از ${tot} مورد انجام شد. هدف برای ${a} سالگی: ${goal}٪</div><div style="color:var(--mut)">${m}</div>${S.p.g?'<div>🎯 هدف تو: '+esc(S.p.g)+'</div>':''}<button class="btn" id="rx">بستن</button>`;
+ $('ovr').classList.add('show');$('rx').onclick=()=>$('ovr').classList.remove('show');
+};
+
+function paintAuto(){$('au').textContent='اتو سیو: '+(S.auto?'روشن ✓':'خاموش');$('au').style.borderColor=S.auto?'var(--ac)':''}
+$('sv').onclick=()=>{const ok=put();$('sv').textContent=ok?'✓ ذخیره شد':'ذخیره ممکن نیست';setTimeout(()=>$('sv').textContent='💾 ذخیره',1500)};
+$('au').onclick=()=>{S.auto=!S.auto;put();paintAuto()};
+$('go').onclick=()=>{$('splash').remove();openProfile()};
+const TP=[
+{k:'med',n:'🫒 مدیترانه‌ای سالم',b:['املت سبزیجات با نان سبوس‌دار','ماست یونانی با گردو و عسل','نان و پنیر با گوجه و خیار'],l:['سالاد یونانی با مرغ گریل','عدسی با سبزیجات','ماهی کبابی با برنج قهوه‌ای'],d:['سوپ جو و سبزیجات','سالاد تن و نخودفرنگی','مرغ تنوری با سبزی کبابی']},
+{k:'pro',n:'💪 پروتئین بالا',b:['۳ تخم‌مرغ با نان جو','کشک و بادام با نان سنگک','ماست و پنیر با خیار'],l:['سینه مرغ با برنج و سالاد','کباب کوبیده با گوجه و سبزی','ماهی سالمون با سبزیجات بخارپز'],d:['املت اسفناج و پنیر','سوپ مرغ و جو','لوبیا چیتی و ماست']},
+{k:'low',n:'🥗 سبک و کم‌کالری',b:['جو دوسر با سیب و دارچین','دو تخم‌مرغ آب‌پز با خیار','ماست کم‌چرب با میوه'],l:['سالاد فصل با مرغ آب‌پز','سوپ سبزیجات','خوراک ماهی با کدو'],d:['ماست و خیار با نان کوچک','سوپ عدس سبک','سالاد کاهو و تن']},
+{k:'veg',n:'🌱 گیاهی',b:['نان و حمص با سبزی','فرنی بادام و خرما','املت گوجه و اسفناج'],l:['عدس پلو بدون گوشت','خوراک لوبیا و برنج','سالاد کینوا و نخود'],d:['آش رشته','سوپ قارچ و سبزیجات','کوکو سبزی و ماست']},
+{k:'irn',n:'🍲 ایرانی سنتی سبک',b:['نان و پنیر و گردو با چای','حلیم کم‌شیرین','نیمرو با نان سنگک'],l:['خورش قیمه کم‌روغن با برنج','آبگوشت سبک','خوراک مرغ و سبزیجات'],d:['کشک بادمجان','ماست و خیار با نان','آش جو']}
+];
+function paintMeals(){
+ const bx=$('mopts');bx.style.display=S.m==='meal'?'flex':'none';
+ bx.innerHTML=`<b style='font-size:12px;color:var(--mut)'>برنامه‌های غذایی آماده (تیک بزن تا اضافه شود)</b>`+TP.map(p=>`<label class='nav' style='display:flex;gap:6px;align-items:center;cursor:pointer;padding:8px'><input type='checkbox' data-tp='${p.k}' ${S.data.meal.some(t=>t.tpl===p.k)?'checked':''} style='accent-color:var(--ac)'>${p.n}</label>`).join('');
+}
+$('mopts').addEventListener('change',e=>{
+ const k=e.target.dataset.tp;if(!k)return;
+ if(e.target.checked){const p=TP.find(x=>x.k===k),T=['08:00','13:00','19:30'];D.forEach((_,i)=>[p.b,p.l,p.d].forEach((arr,j)=>S.data.meal.push({id:Date.now()+Math.random(),d:i,t:arr[i%arr.length],time:T[j],done:false,tpl:k})))}
+ else S.data.meal=S.data.meal.filter(t=>t.tpl!==k);
+ save();render();
+});
+document.querySelectorAll('.nav[data-m]').forEach(b=>b.onclick=()=>{S.m=b.dataset.m;save();render();if(S.m==='task')$('side').classList.remove('open')});
+function paintCt(){document.querySelectorAll('[data-ct]').forEach(b=>b.classList.toggle('ghost',b.dataset.ct!==S.ct))}
+document.querySelectorAll('[data-ct]').forEach(b=>b.onclick=()=>{S.ct=b.dataset.ct;save();paintCt();chart()});
+function checkNotice(){if(S.notice&&document.body.classList.contains('locked')===false)$('ovn').classList.add('show')}
+$('nok').onclick=()=>{S.notice=false;put();$('ovn').classList.remove('show')};
+$('narc').textContent='📚 برنامه‌های ذخیره‌شده در هفته';
+document.querySelector('#ova h2').textContent='برنامه‌های ذخیره‌شده در هفته';
+$('c2').textContent='📚 حذف برنامه‌های ذخیره‌شده (تکی‌تکی)';
+$('c1').onclick=()=>{if(confirm('کل برنامه روزانه هفته جاری پاک شود؟')){S.data.task=[];save();render();$('ovc').classList.remove('show')}};
+$('c2').onclick=()=>{$('ovc').classList.remove('show');showArch(true)};
+$('abody').addEventListener('click',e=>{const d=e.target.closest('[data-del]');if(d&&confirm('این هفته ذخیره‌شده برای همیشه حذف شود؟')){S.arch=S.arch.filter(w=>w.id!=d.dataset.del);put();showArch(true)}});
+let H=null;
+function initHeart(wrap){
+ if(!window.THREE)return;
+ try{
+ if(!H){
+  const T=THREE,r=new T.WebGLRenderer({antialias:true,alpha:true});r.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  const sc=new T.Scene(),cam=new T.PerspectiveCamera(40,1,.1,50);cam.position.set(0,.1,5.6);
+  sc.add(new T.AmbientLight(0xffffff,.55));
+  const dl=new T.DirectionalLight(0xffffff,.9);dl.position.set(3,4,5);sc.add(dl);
+  const pl=new T.PointLight(0x39ff14,.9,14);pl.position.set(-3,-1,3);sc.add(pl);
+  const outer=new T.Group(),spin=new T.Group(),heart=new T.Group();outer.add(spin);spin.add(heart);sc.add(outer);
+  const P=(t,p)=>{const x=16*Math.pow(Math.sin(t),3),y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t),rr=x/15*(1+.14*Math.cos(p-.4))*(1-.07*Math.exp(-Math.pow(p-2,2)/.1));return [rr*Math.cos(p),(y+6)/13,rr*Math.sin(p)*.8]};
+  const nt=60,np=72,pos=[],col=[],idx=[];
+  for(let i=0;i<=nt;i++)for(let j=0;j<=np;j++){const k=i/nt,q=P(k*Math.PI,j/np*Math.PI*2);pos.push(q[0],q[1],q[2]);col.push(.75+.15*(1-k),.1+.15*(1-k)*(.5+.5*Math.sin(j*.5)),.17)}
+  for(let i=0;i<nt;i++)for(let j=0;j<np;j++){const a=i*(np+1)+j,b=a+np+1;idx.push(a,b,a+1,b,b+1,a+1)}
+  const gm=new T.BufferGeometry();gm.setAttribute('position',new T.Float32BufferAttribute(pos,3));gm.setAttribute('color',new T.Float32BufferAttribute(col,3));gm.setIndex(idx);gm.computeVertexNormals();
+  heart.add(new T.Mesh(gm,new T.MeshPhongMaterial({vertexColors:true,shininess:70,specular:0x884444,side:T.DoubleSide})));
+  const tube=(pts,rad,c)=>heart.add(new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts.map(p=>new T.Vector3(p[0],p[1],p[2]))),40,rad,10,false),new T.MeshPhongMaterial({color:c,shininess:45})));
+  tube([[.05,.7,.05],[.1,1.2,.05],[.35,1.6,0],[.7,1.45,-.1],[.8,1.0,-.15]],.17,0xe0455a);
+  tube([[-.15,.75,.35],[-.3,1.25,.4],[-.65,1.5,.2]],.14,0x6b7fd7);
+  tube([[-.55,.7,-.25],[-.6,1.3,-.3],[-.55,1.7,-.3]],.13,0x5a6fd0);
+  tube([[-.45,-.1,-.45],[-.5,-.6,-.5]],.1,0x5a6fb8);
+  [2.1,5.0].forEach(p=>tube(Array.from({length:12},(_,i)=>{const q=P(.5+i*.19,p);return [q[0]*1.03,q[1],q[2]*1.03]}),.025,0xe8a33a));
+  const at=(x,y,z,s,c)=>{const m=new T.Mesh(new T.SphereGeometry(s,24,18),new T.MeshPhongMaterial({color:c,shininess:50}));m.position.set(x,y,z);m.scale.set(1,.85,.9);heart.add(m)};
+  at(-.6,.75,-.1,.38,0xc23a55);at(.55,.85,-.05,.3,0xc23a55);
+  heart.rotation.z=.5;heart.position.y=-.2;
+  H={r,sc,cam,mx:0,my:0};
+  window.addEventListener('pointermove',e=>{H.mx=e.clientX/window.innerWidth*2-1;H.my=e.clientY/window.innerHeight*2-1});
+  const clk=new T.Clock();
+  (function loop(){requestAnimationFrame(loop);if(!$('ovr').classList.contains('show'))return;const t=clk.getElapsedTime();
+   spin.rotation.y=Math.sin(t*.8)*.12;
+   outer.rotation.x+=(H.my*.9-outer.rotation.x)*.12;outer.rotation.y+=(H.mx*1.4-outer.rotation.y)*.12;
+   outer.position.y=Math.sin(t*1.3)*.1;
+   outer.scale.setScalar(1+.05*Math.pow(Math.max(0,Math.sin(t*5)),8)+.03*Math.pow(Math.max(0,Math.sin(t*5-1.2)),8));
+   pl.position.x=Math.sin(t)*3;r.render(sc,cam)})();
+ }
+ wrap.appendChild(H.r.domElement);
+ const w=wrap.clientWidth||300;H.r.setSize(w,190);H.cam.aspect=w/190;H.cam.updateProjectionMatrix();
+ }catch(e){}
+}
+$('run').onclick=()=>{
+ const a=S.p.a,all=S.data.task.concat(S.data.meal),tot=all.length,dn=all.filter(t=>t.done).length,rate=tot?Math.round(dn/tot*100):0;
+ const goal=a<18?70:a<=40?75:a<=60?65:55;
+ const ti=(new Date().getDay()+1)%7,td=all.filter(t=>t.d===ti),tr=td.length?Math.round(td.filter(t=>t.done).length/td.length*100):0;
+ const miss=all.filter(t=>!t.done).sort((x,y)=>x.d-y.d||x.time.localeCompare(y.time));
+ let v;
+ if(!tot)v='هنوز برنامه‌ای ثبت نشده';
+ else if(rate>=goal+15)v='عالی بود 🔥';
+ else if(rate>=goal)v='خوب بود ✅';
+ else if(rate>=goal-20)v='نزدیک بود';
+ else v='این هفته ضعیف بود';
+ const cnt=D.map((n,i)=>miss.filter(t=>t.d===i).length),wi=cnt.indexOf(Math.max(...cnt)),early=miss.filter(t=>t.time<'12:00').length,tips=[];
+ if(!tot)tips.push('چند کار و وعده غذایی اضافه کن و بعد دوباره اجرا بزن.');
+ else{
+  if(rate<goal)tips.push('هر روز فقط ۳ کار مهم را انتخاب کن و اول آن‌ها را انجام بده.');
+  if(miss.length&&cnt[wi]>0)tips.push(`بیشترین کار انجام‌نشده مربوط به ${D[wi]} است (${cnt[wi]} مورد)؛ برنامه آن روز را سبک‌تر کن.`);
+  if(miss.length)tips.push(early*2>=miss.length?'بیشتر کارهای صبح جا می‌مانند؛ شب قبل آماده‌شان کن.':'بیشتر کارهای عصر و شب جا می‌مانند؛ کارهای مهم را زودتر در روز بگذار.');
+  else tips.push('همه‌چیز انجام شد! هفته بعد یک هدف کمی سخت‌تر اضافه کن.');
+  tips.push('هر شب ۲ دقیقه تیک‌ها را بزن تا چیزی فراموش نشود.');
+ }
+ const ml=miss.slice(0,10).map(t=>`<li>${D[t.d]} «${esc(t.t)}» ساعت ${t.time}</li>`).join('')+(miss.length>10?`<li>و ${miss.length-10} مورد دیگر</li>`:'');
+ const ul="<ul style='margin:0;padding-inline-start:18px'>";
+ $('rbody').innerHTML=`<div id='hwrap' style='height:190px'></div><h2>${esc(S.p.f)} ${esc(S.p.l)}، ارزیابی هفته</h2><div class='big'>${rate}٪</div><div class='bar'><i style='width:${rate}%'></i></div><b>${v}</b><div>${dn} از ${tot} مورد انجام شد · هدف ${a} سالگی: ${goal}٪</div><div>امروز (${D[ti]}): ${td.length?tr+'٪':'برنامه‌ای نداری'}${td.length&&tr===100?' · عالی بود 👏':''}</div>${S.p.g?`<div>🎯 هدف تو: ${esc(S.p.g)}</div>`:''}<b>برای بهتر شدن:</b>${ul}${tips.map(x=>`<li>${x}</li>`).join('')}</ul>${miss.length?`<b>کارهایی که انجام ندادی (برای هرکدام بپرس چرا؟):</b>${ul}${ml}</ul>`:''}<button class='btn' id='rx'>بستن</button>`;
+ $('ovr').classList.add('show');$('rx').onclick=()=>$('ovr').classList.remove('show');
+ initHeart($('hwrap'));
+};
+paintCt();
+theme();paintAuto();rollover();render();checkNotice();
+setInterval(()=>{const o=S.wk;rollover();if(S.wk!==o){render();checkNotice()}},30000);
+</script>
+</body>
+</html>
